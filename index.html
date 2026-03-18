@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="João Francisco Fernandes – Motorsports & Vehicle Photography, Portugal">
+  <title>João F. Fernandes | Photography</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #0a0a0a;
+      --surface: #111;
+      --accent: #e8e8e8;
+      --muted: #666;
+      --white: #f5f5f5;
+      --font: 'Inter', sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--white);
+      font-family: var(--font);
+      font-weight: 300;
+      line-height: 1.6;
+      overflow: hidden;
+    }
+
+    body.loaded { overflow: auto; }
+
+    /* ── FADE OVERLAY ── */
+    #fadeOverlay {
+      position: fixed;
+      inset: 0;
+      z-index: 199;
+      background: #000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.5s ease;
+    }
+
+    #langSwitch {
+      background: none;
+      border: 1px solid #2a2a2a;
+      color: var(--muted);
+      font-size: 0.85rem;
+      cursor: pointer;
+      padding: 0.3rem 0.6rem;
+      border-radius: 4px;
+      transition: border-color 0.2s, color 0.2s;
+      line-height: 1;
+    }
+
+    #langSwitch:hover {
+      border-color: #555;
+      color: var(--white);
+    }
+
+    @keyframes langGlint {
+        0%   { border-color: #2a2a2a; color: var(--muted); }
+        50%  { border-color: #8b0000; color: #c0392b; }
+        100% { border-color: #2a2a2a; color: var(--muted); }
+    }
+
+    #langSwitch.glinting {
+        animation: langGlint 0.8s ease-in-out 3;
+    }
+
+
+    /* ── SPLASH ── */
+    #splash {
+      position: fixed;
+      inset: 0;
+      z-index: 200;
+      background: var(--bg);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .splash-nav {
+      padding: 1.5rem 4rem;
+      display: flex;
+      align-items: center;
+    }
+
+    .splash-body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding-bottom: 10vh;
+      transition: opacity 0.35s ease;
+    }
+
+    .splash-body h1 {
+      font-size: clamp(2rem, 6vw, 4rem);
+      font-weight: 300;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      text-align: center;
+      margin-bottom: 0.5rem;
+    }
+
+    .splash-body .handle {
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      color: #444;
+      margin-bottom: 3rem;
+      text-transform: lowercase;
+    }
+
+    .flag-row {
+      display: flex;
+      gap: 3.5rem;
+      align-items: center;
+    }
+
+    .flag-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      opacity: 0.6;
+      transition: opacity 0.25s ease, transform 0.25s ease;
+      width: 76px;
+      border-radius: 5px;
+      overflow: hidden;
+      display: block;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.5);
+    }
+
+    .flag-btn:hover {
+      opacity: 1;
+      transform: scale(1.08);
+    }
+
+    .flag-btn svg {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    /* ── MAIN ── */
+    #main {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.5rem 4rem;
+      background: linear-gradient(to bottom, rgba(10,10,10,0.85), transparent);
+      backdrop-filter: blur(4px);
+    }
+
+    .logo {
+      font-size: 1.1rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      color: var(--white);
+      text-decoration: none;
+    }
+
+    .logo img { height: 36px; width: auto; }
+
+    nav ul { display: flex; gap: 2.5rem; list-style: none; }
+
+    nav ul a {
+      color: var(--accent);
+      text-decoration: none;
+      font-size: 0.8rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+
+    nav ul a:hover { color: var(--white); }
+
+    /* ── HERO ── */
+    .hero {
+      height: 100vh;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      background: url('photos/hero.webp') center/cover no-repeat;
+      background-color: #1a1a1a;
+      filter: brightness(0.45);
+    }
+
+    .hero-content {
+      position: relative;
+      text-align: center;
+      padding: 2rem;
+    }
+
+    .hero-content h1 {
+      font-size: clamp(2rem, 6vw, 4.5rem);
+      font-weight: 300;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 0.4rem;
+    }
+
+    .hero-content .handle {
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      color: #444;
+      margin-bottom: 1rem;
+      text-transform: lowercase;
+    }
+
+    .hero-content .subtitle {
+      font-size: clamp(0.75rem, 2vw, 0.95rem);
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 0.5rem;
+    }
+
+    .hero-content .location {
+      font-size: 0.72rem;
+      color: #555;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      display: block;
+      margin-bottom: 2.5rem;
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 0.75rem 2.2rem;
+      border: 1px solid #555;
+      color: var(--white);
+      text-decoration: none;
+      font-size: 0.75rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      transition: background 0.25s, color 0.25s, border-color 0.25s;
+    }
+
+    .btn:hover {
+      background: var(--white);
+      color: var(--bg);
+      border-color: var(--white);
+    }
+
+    /* ── SECTIONS ── */
+    section { padding: 6rem 4rem; }
+
+    .section-label {
+      font-size: 0.68rem;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 3rem;
+      display: flex;
+      align-items: center;
+      gap: 1.2rem;
+    }
+
+    .section-label::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: #1e1e1e;
+    }
+
+    /* ── SERVICES ── */
+    #services { background: var(--surface); }
+
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .service-card {
+      padding: 2.5rem 2rem;
+      border: 1px solid #1a1a1a;
+      transition: border-color 0.3s;
+    }
+
+    .service-card:hover { border-color: #3a3a3a; }
+
+    .service-card .icon { font-size: 1.6rem; margin-bottom: 1.2rem; }
+
+    .service-card h3 {
+      font-size: 0.9rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      margin-bottom: 0.75rem;
+    }
+
+    .service-card p {
+      font-size: 0.82rem;
+      color: var(--muted);
+      line-height: 1.75;
+    }
+
+    /* ── GALLERY ── */
+    #gallery { background: var(--bg); }
+
+    .gallery-grid { columns: 3; column-gap: 6px; }
+
+    .gallery-item {
+      break-inside: avoid;
+      margin-bottom: 6px;
+      overflow: hidden;
+      cursor: pointer;
+    }
+
+    .gallery-item img {
+      width: 100%;
+      display: block;
+      transition: transform 0.45s ease, filter 0.3s;
+      filter: brightness(0.88);
+    }
+
+    .gallery-item:hover img {
+      transform: scale(1.04);
+      filter: brightness(1);
+    }
+
+    /* ── LIGHTBOX ── */
+    .lightbox {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      background: rgba(0,0,0,0.96);
+      align-items: center;
+      justify-content: center;
+    }
+
+    .lightbox.active { display: flex; }
+    .lightbox img { max-width: 90vw; max-height: 90vh; object-fit: contain; }
+
+    .lightbox-close {
+      position: absolute;
+      top: 1.5rem; right: 2rem;
+      font-size: 1.8rem;
+      color: var(--white);
+      cursor: pointer;
+      opacity: 0.5;
+      transition: opacity 0.2s;
+    }
+
+    .lightbox-prev, .lightbox-next {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 2.5rem;
+      color: var(--white);
+      cursor: pointer;
+      opacity: 0.35;
+      transition: opacity 0.2s;
+      padding: 1rem;
+      user-select: none;
+    }
+
+    .lightbox-prev { left: 0.5rem; }
+    .lightbox-next { right: 0.5rem; }
+    .lightbox-close:hover, .lightbox-prev:hover, .lightbox-next:hover { opacity: 1; }
+
+    /* ── CONTACT ── */
+    #contact { background: var(--surface); text-align: center; }
+    #contact .section-label { justify-content: center; }
+    #contact .section-label::after { display: none; }
+
+    #contact h2 {
+      font-size: clamp(1.5rem, 4vw, 2.8rem);
+      font-weight: 300;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 0.75rem;
+    }
+
+    #contact .tagline {
+      color: var(--muted);
+      font-size: 0.82rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      margin-bottom: 3rem;
+    }
+
+    .contact-links { display: flex; justify-content: center; gap: 3rem; flex-wrap: wrap; }
+
+    .contact-links a {
+      color: var(--accent);
+      text-decoration: none;
+      font-size: 0.82rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+
+    .contact-links a:hover { color: var(--white); }
+
+    /* ── FOOTER ── */
+    footer {
+      text-align: center;
+      padding: 2rem;
+      color: #2a2a2a;
+      font-size: 0.72rem;
+      letter-spacing: 0.1em;
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+      nav, .splash-nav { padding: 1.2rem 1.5rem; }
+      section { padding: 4rem 1.5rem; }
+      .gallery-grid { columns: 2; }
+    }
+
+    @media (max-width: 480px) {
+      .gallery-grid { columns: 1; }
+      nav ul { gap: 1.2rem; }
+      nav ul a { font-size: 0.72rem; }
+      .flag-btn { width: 58px; }
+      .flag-row { gap: 2.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══════════════ FADE OVERLAY ══════════════ -->
+<div id="fadeOverlay"></div>
+
+<!-- ══════════════ SPLASH ══════════════ -->
+<div id="splash">
+
+  <div class="splash-nav">
+    <a class="logo" href="#">
+        <img src="logo.png" alt="Logo">
+    </a>
+  </div>
+
+  <div class="splash-body">
+    <h1>João Francisco<br>Fernandes</h1>
+    <p class="handle">@wannabefotografo</p>
+
+    <div class="flag-row">
+
+      <button class="flag-btn" data-lang="pt" aria-label="Português">
+        <svg viewBox="0 0 900 600" xmlns="http://www.w3.org/2000/svg">
+          <rect width="360" height="600" fill="#006600"/>
+          <rect x="360" width="540" height="600" fill="#C60B1E"/>
+          <circle cx="360" cy="300" r="126" fill="#FFD700"/>
+          <circle cx="360" cy="300" r="126" fill="none" stroke="#1a1a1a" stroke-width="6"/>
+          <path d="M318,240 h84 v84 a42,42 0 0,1 -84,0 z" fill="#003399"/>
+          <circle cx="338" cy="262" r="12" fill="white"/>
+          <circle cx="382" cy="262" r="12" fill="white"/>
+          <circle cx="360" cy="286" r="12" fill="white"/>
+          <circle cx="338" cy="310" r="12" fill="white"/>
+          <circle cx="382" cy="310" r="12" fill="white"/>
+          <path d="M318,296 h84 v28 a42,42 0 0,1 -84,0 z" fill="#C60B1E" opacity="0.55"/>
+        </svg>
+      </button>
+
+      <button class="flag-btn" data-lang="en" aria-label="English">
+        <svg viewBox="0 0 60 30" xmlns="http://www.w3.org/2000/svg">
+          <rect width="60" height="30" fill="#012169"/>
+          <path d="M0,0 L60,30 M60,0 L0,30" stroke="white" stroke-width="8"/>
+          <line x1="0" y1="0" x2="30" y2="15" stroke="#C8102E" stroke-width="5"/>
+          <line x1="60" y1="0" x2="30" y2="15" stroke="#C8102E" stroke-width="5"/>
+          <line x1="0" y1="30" x2="30" y2="15" stroke="#C8102E" stroke-width="5"/>
+          <line x1="60" y1="30" x2="30" y2="15" stroke="#C8102E" stroke-width="5"/>
+          <path d="M30,0 V30 M0,15 H60" stroke="white" stroke-width="10"/>
+          <path d="M30,0 V30 M0,15 H60" stroke="#C8102E" stroke-width="6"/>
+        </svg>
+      </button>
+
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ MAIN CONTENT ══════════════ -->
+<div id="main">
+
+  <nav>
+    <a class="logo" href="#">
+        <img src="logo.png" alt="Logo">
+    </a>
+    <ul>
+      <li><a href="#gallery"><span data-en="Work" data-pt="Trabalho">Work</span></a></li>
+      <li><a href="#services"><span data-en="Services" data-pt="Serviços">Services</span></a></li>
+      <li><a href="#contact"><span data-en="Contact" data-pt="Contacto">Contact</span></a></li>
+      <button id="langSwitch" onclick="resetSplash()" aria-label="Change language">🌐</button>
+    </ul>
+  </nav>
+
+  <section class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-content">
+      <h1>João Francisco<br>Fernandes</h1>
+      <p class="handle">@wannabefotografo</p>
+      <p class="subtitle"
+         data-en="Motorsports &amp; Vehicle Photography"
+         data-pt="Fotografia Automóvel e de Desporto motorizado">
+        Motorsports &amp; Vehicle Photography
+      </p>
+      <span class="location">Portugal</span>
+      <a class="btn" href="#gallery"
+         data-en="View Work"
+         data-pt="Ver Trabalho">
+        View Work
+      </a>
+    </div>
+  </section>
+
+  <section id="services">
+    <div class="section-label"
+         data-en="Services"
+         data-pt="Serviços">Services</div>
+    <div class="services-grid">
+
+      <div class="service-card">
+        <div class="icon">🏎️</div>
+        <h3 data-en="Motorsports Coverage"
+            data-pt="Cobertura de Motorsport">Motorsports Coverage</h3>
+        <p data-en="On-track photography at racing events, track days, and circuit events. Full gallery delivery with commercial licensing available."
+           data-pt="Fotografia em pista em eventos de corrida, track days e eventos de circuito. Entrega de galeria completa com licenciamento comercial disponível.">
+          On-track photography at racing events, track days, and circuit events. Full gallery delivery with commercial licensing available.
+        </p>
+      </div>
+
+      <div class="service-card">
+        <div class="icon">🚗</div>
+        <h3 data-en="Vehicle Photography"
+            data-pt="Fotografia Automóvel">Vehicle Photography</h3>
+        <p data-en="Professional static and rolling shots for dealerships, private sellers, and enthusiasts. Studio and location setups."
+           data-pt="Sessões estáticas e em movimento para concessionários, vendedores privados e entusiastas. Estúdio e exteriores.">
+          Professional static and rolling shots for dealerships, private sellers, and enthusiasts. Studio and location setups.
+        </p>
+      </div>
+
+      <div class="service-card">
+        <div class="icon">📷</div>
+        <h3 data-en="Event Coverage"
+            data-pt="Cobertura de Eventos">Event Coverage</h3>
+        <p data-en="Full coverage of automotive meets, shows, and promotional events. Ideal for brand content and social media use."
+           data-pt="Cobertura completa de encontros, exposições e eventos promocionais. Ideal para conteúdo de marca e redes sociais.">
+          Full coverage of automotive meets, shows, and promotional events. Ideal for brand content and social media use.
+        </p>
+      </div>
+
+      <div class="service-card">
+        <div class="icon">📦</div>
+        <h3 data-en="Bulk Licensing"
+            data-pt="Licenciamento em Massa">Bulk Licensing</h3>
+        <p data-en="Teams and organisations can license full event galleries for press, marketing, and promotional use."
+           data-pt="Equipas e organizações podem licenciar galerias completas de eventos para imprensa, marketing e uso promocional.">
+          Teams and organisations can license full event galleries for press, marketing, and promotional use.
+        </p>
+      </div>
+
+    </div>
+  </section>
+
+  <section id="gallery">
+    <div class="section-label"
+         data-en="Portfolio"
+         data-pt="Portfólio">Portfolio</div>
+    <div class="gallery-grid" id="galleryGrid">
+
+      <!--
+      ┌─────────────────────────────────────────────┐
+      │  HOW TO ADD A PHOTO — copy this block:      │
+      │                                             │
+      │  <div class="gallery-item">                 │
+      │    <img                                     │
+      │      src="photos/thumbs/FILENAME.webp"      │
+      │      data-full="photos/full/FILENAME.webp"  │
+      │      loading="lazy"                         │
+      │      alt="description"                      │
+      │    >                                        │
+      │  </div>                                     │
+      └─────────────────────────────────────────────┘
+      -->
+
+        <div class="gallery-item">
+        <img src="photos/thumbs/thumbs-86.webp" data-full="photos/full/full-86.webp" loading="lazy" alt="Event coverage">
+        </div>
+        <div class="gallery-item">
+        <img src="photos/thumbs/thumbs-26.webp" data-full="photos/full/full-26.webp" loading="lazy" alt="MotoGP Portimão">
+        </div>
+        <div class="gallery-item">
+        <img src="photos/thumbs/thumbs-17.webp" data-full="photos/full/full-17.webp" loading="lazy" alt="Vehicle detail">
+        </div>
+        <div class="gallery-item">
+        <img src="photos/thumbs/thumbs-87.webp" data-full="photos/full/full-87.webp" loading="lazy" alt="Track day coverage">
+        </div>
+        <div class="gallery-item">
+        <img src="photos/thumbs/thumbs-47.webp" data-full="photos/full/full-47.webp" loading="lazy" alt="Car photography">
+        </div>
+        <div class="gallery-item">
+        <img src="photos/thumbs/thumbs-106.webp" data-full="photos/full/full-106.webp" loading="lazy" alt="Racing shot">
+        </div>
+  </section>
+
+  <section id="contact">
+    <div class="section-label"
+         data-en="Contact"
+         data-pt="Contacto">Contact</div>
+    <h2 data-en="Let's Work Together"
+        data-pt="Vamos Trabalhar Juntos">Let's Work Together</h2>
+    <p class="tagline"
+       data-en="Media passes · Commercial shoots · Event coverage"
+       data-pt="Passes de imprensa · Sessões comerciais · Cobertura de eventos">
+      Media passes · Commercial shoots · Event coverage
+    </p>
+    <div class="contact-links">
+      <a>+351 927 699 707</a>
+      <a href="mailto:joaowannabe@gmail.com">joaowannabe@gmail.com</a>
+      <a href="https://instagram.com/wannabefotografo" target="_blank">@wannabefotografo</a>
+    </div>
+  </section>
+
+  <footer>
+    <p>© 2026 João Francisco Fernandes · All rights reserved</p>
+  </footer>
+
+</div>
+
+<!-- ══════════════ LIGHTBOX ══════════════ -->
+<div class="lightbox" id="lightbox">
+  <span class="lightbox-close" id="lbClose">✕</span>
+  <span class="lightbox-prev" id="lbPrev">&#8249;</span>
+  <img src="" alt="" id="lbImg">
+  <span class="lightbox-next" id="lbNext">&#8250;</span>
+</div>
+
+<script>
+
+    document.addEventListener('DOMContentLoaded', () => {
+    const saved = localStorage.getItem('lang');
+    if (saved) {
+        applyLang(saved);
+        splash.style.display     = 'none';
+        main.style.opacity       = '1';
+        main.style.pointerEvents = 'auto';
+        document.body.classList.add('loaded');
+
+        // trigger the glint after a short delay so the page has painted
+        setTimeout(() => {
+        const btn = document.getElementById('langSwitch');
+        btn.classList.add('glinting');
+        btn.addEventListener('animationend', () => btn.classList.remove('glinting'), { once: true });
+        }, 400);
+    }
+    });
+
+
+  const overlay = document.getElementById('fadeOverlay');
+  const splash  = document.getElementById('splash');
+  const main    = document.getElementById('main');
+  const flags   = document.querySelectorAll('.flag-btn');
+
+  function applyLang(lang) {
+    document.querySelectorAll('[data-en]').forEach(el => {
+      el.innerHTML = el.getAttribute('data-' + lang);
+    });
+  }
+
+  flags.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const chosen = btn.dataset.lang;
+      const other  = splash.querySelector(`[data-lang="${chosen === 'pt' ? 'en' : 'pt'}"]`);
+
+      other.style.transition = 'opacity 0.3s ease';
+      other.style.opacity    = '0';
+
+      setTimeout(() => {
+        btn.style.transition = 'opacity 0.3s ease';
+        btn.style.opacity    = '0';
+      }, 200);
+
+      setTimeout(() => {
+        overlay.style.opacity       = '1';
+        overlay.style.pointerEvents = 'all';
+      }, 450);
+
+      setTimeout(() => {
+        applyLang(chosen);
+        localStorage.setItem('lang', chosen); 
+        splash.style.display     = 'none';
+        main.style.opacity       = '1';
+        main.style.pointerEvents = 'auto';
+        document.body.classList.add('loaded');
+      }, 950);
+
+      setTimeout(() => {
+        overlay.style.opacity       = '0';
+        overlay.style.pointerEvents = 'none';
+      }, 1050);
+    });
+  });
+
+  const items  = document.querySelectorAll('.gallery-item img');
+  const lb     = document.getElementById('lightbox');
+  const lbImg  = document.getElementById('lbImg');
+  let current  = 0;
+
+  function open(i) {
+    current = i;
+    lbImg.src = items[i].dataset.full;
+    lb.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function close() {
+    lb.classList.remove('active');
+    document.body.style.overflow = '';
+  }
+
+  items.forEach((img, i) => img.parentElement.addEventListener('click', () => open(i)));
+  document.getElementById('lbClose').addEventListener('click', close);
+  lb.addEventListener('click', e => { if (e.target === lb) close(); });
+  document.getElementById('lbPrev').addEventListener('click', () => open((current - 1 + items.length) % items.length));
+  document.getElementById('lbNext').addEventListener('click', () => open((current + 1) % items.length));
+
+  document.addEventListener('keydown', e => {
+    if (!lb.classList.contains('active')) return;
+    if (e.key === 'Escape')     close();
+    if (e.key === 'ArrowLeft')  open((current - 1 + items.length) % items.length);
+    if (e.key === 'ArrowRight') open((current + 1) % items.length);
+  });
+
+  function resetSplash() {
+    const other = splash.querySelectorAll('.flag-btn');
+    other.forEach(b => { b.style.opacity = '0.6'; b.style.transition = 'opacity 0.3s ease'; });
+
+    overlay.style.opacity       = '1';
+    overlay.style.pointerEvents = 'all';
+
+    setTimeout(() => {
+        main.style.opacity       = '0';
+        main.style.pointerEvents = 'none';
+        document.body.classList.remove('loaded');
+        splash.style.display = 'flex';
+    }, 450);
+
+    setTimeout(() => {
+        overlay.style.opacity       = '0';
+        overlay.style.pointerEvents = 'none';
+    }, 600);
+  }
+
+</script>
+
+</body>
+</html>
+
+
