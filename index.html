@@ -439,13 +439,127 @@ git push
       .gallery-grid { columns: 2; }
     }
 
-    @media (max-width: 480px) {
-      .gallery-grid { columns: 1; }
-      nav ul { gap: 1.2rem; }
-      nav ul a { font-size: 0.72rem; }
-      .flag-btn { width: 58px; }
-      .flag-row { gap: 2.5rem; }
+    /* ── HAMBURGER ── */
+    #hamburger {
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.4rem;
+    z-index: 101;
+    position: relative;
     }
+
+    #hamburger span {
+    display: block;
+    width: 22px;
+    height: 2px;
+    background: var(--white);
+    border-radius: 2px;
+    transition: transform 0.38s ease, opacity 0.38s ease;
+    transform-origin: center;
+    }
+
+    #hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    #hamburger.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+    #hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+    /* ── MOBILE MENU OVERLAY ── */
+    #mobileMenu {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 99;
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    background: rgba(10,10,10,0.75);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.38s ease;
+    align-items: center;
+    justify-content: center;
+    }
+
+    #mobileMenu.open {
+    opacity: 1;
+    pointer-events: all;
+    }
+
+    #mobileLinks {
+    list-style: none;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 2.5rem;
+    }
+
+    #mobileLinks li {
+    transform: translateY(-18px);
+    opacity: 0;
+    transition: transform 0.35s ease, opacity 0.35s ease;
+    }
+
+    #mobileMenu.open #mobileLinks li { transform: translateY(0); opacity: 1; }
+    #mobileLinks li:nth-child(1) { transition-delay: 0.06s; }
+    #mobileLinks li:nth-child(2) { transition-delay: 0.12s; }
+    #mobileLinks li:nth-child(3) { transition-delay: 0.18s; }
+
+    #mobileLinks a {
+    color: var(--white);
+    text-decoration: none;
+    font-size: 1.4rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    font-weight: 300;
+    transition: color 0.2s;
+    }
+
+    #mobileLinks a:hover { color: var(--muted); }
+
+    /* ── NAV RIGHT GROUP ── */
+    .nav-right {
+    display: flex;
+    align-items: center;
+    gap: 2.5rem;
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+    nav {
+        padding: 1.2rem 1.5rem;
+        justify-content: space-between;
+        position: relative;
+    }
+
+    #hamburger { display: flex; }
+
+    #desktopLinks { display: none; }
+
+    #mobileMenu { display: flex; }
+
+    section { padding: 4rem 1.5rem; }
+    .gallery-grid { columns: 2; }
+
+    /* Logo animates to center when menu open */
+    #navLogo {
+        transition: transform 0.38s ease, font-size 0.38s ease, left 0.38s ease, position 0s;
+    }
+
+    #mainNav.menu-open #navLogo {
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%) scale(1.35);
+    }
+    }
+
+    @media (max-width: 480px) {
+    .gallery-grid { columns: 1; }
+    .flag-btn { width: 58px; }
+    .flag-row { gap: 2.5rem; }
+    }
+
   </style>
 </head>
 <body>
@@ -501,20 +615,33 @@ git push
   </div>
 </div>
 
-<!-- ══════════════ MAIN CONTENT ══════════════ -->
+<!-- ══════════════ MAIN CONTENT ══════════════-->
 <div id="main">
 
-  <nav>
-    <a class="logo" href="#">
-        <img src="logo.png" alt="Logo">
-    </a>
-    <ul>
-      <li><a href="#gallery"><span data-en="Work" data-pt="Trabalho">Work</span></a></li>
-      <li><a href="#services"><span data-en="Services" data-pt="Serviços">Services</span></a></li>
-      <li><a href="#contact"><span data-en="Contact" data-pt="Contacto">Contact</span></a></li>
-      <button id="langSwitch" onclick="resetSplash()" aria-label="Change language">🌐</button>
+  <nav id="mainNav">
+  <button id="hamburger" aria-label="Toggle menu">
+    <span></span><span></span><span></span>
+  </button>
+  <a class="logo" href="#">
+      <img src="logo.png" alt="Logo">
+  </a>
+  <div class="nav-right">
+    <ul id="desktopLinks">
+    <li><a href="#gallery"><span data-en="Work" data-pt="Trabalho">Work</span></a></li>
+    <li><a href="#services"><span data-en="Services" data-pt="Serviços">Services</span></a></li>
+    <li><a href="#contact"><span data-en="Contact" data-pt="Contacto">Contact</span></a></li>
     </ul>
+    <button id="langSwitch" onclick="resetSplash()" aria-label="Change language">🌐</button>
+  </div>
   </nav>
+  <div id="mobileMenu" aria-hidden="true">
+    <ul id="mobileLinks">
+      <li><a href="#gallery" data-en="Work" data-pt="Trabalho">Work</a></li>
+      <li><a href="#services" data-en="Services" data-pt="Serviços">Services</a></li>
+      <li><a href="#contact" data-en="Contact" data-pt="Contacto">Contact</a></li>
+    </ul>
+  </div>
+
 
   <section class="hero">
     <div class="hero-bg"></div>
@@ -723,10 +850,37 @@ git push
     });
   });
 
-  const items  = document.querySelectorAll('.gallery-item img');
-  const lb     = document.getElementById('lightbox');
-  const lbImg  = document.getElementById('lbImg');
-  let current  = 0;
+    const items  = document.querySelectorAll('.gallery-item img');
+    const hamburger   = document.getElementById('hamburger');
+    const mobileMenu  = document.getElementById('mobileMenu');
+    const mainNav     = document.getElementById('mainNav');
+    const mobileLinks = document.querySelectorAll('#mobileLinks a');
+    const lb     = document.getElementById('lightbox');
+    const lbImg  = document.getElementById('lbImg');
+    let current  = 0;
+
+    function openMenu() {
+    hamburger.classList.add('open');
+    mobileMenu.classList.add('open');
+    mainNav.classList.add('menu-open');
+    mobileMenu.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+    }
+
+    function closeMenu() {
+    hamburger.classList.remove('open');
+    mobileMenu.classList.remove('open');
+    mainNav.classList.remove('menu-open');
+    mobileMenu.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+    }
+
+    hamburger.addEventListener('click', () => {
+    hamburger.classList.contains('open') ? closeMenu() : openMenu();
+    });
+
+// close when a link is clicked
+mobileLinks.forEach(link => link.addEventListener('click', closeMenu));
 
   function open(i) {
     current = i;
