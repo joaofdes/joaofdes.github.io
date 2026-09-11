@@ -379,7 +379,7 @@ git push
       background: #1e1e1e;
     }
 
-    /* ── SERVICES ── */
+/* ── SERVICES ── */
     #services { background: var(--surface); }
 
     .services-grid {
@@ -389,25 +389,46 @@ git push
     }
 
     .service-card {
+      position: relative;
       padding: 2.5rem 2rem;
       border: 1px solid #1a1a1a;
-      transition: border-color 0.3s;
+      transition: border-color 0.3s ease;
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      z-index: 1;
+      overflow: hidden;
+      border-radius: 4px; /* Optional: adds slight rounding */
+    }
+
+    /* Dark overlay to ensure text remains readable */
+    .service-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: rgba(10, 10, 10, 0.85); /* Adjust opacity (0.85) to make it darker/lighter */
+      z-index: -1;
+      transition: background 0.3s ease;
     }
 
     .service-card:hover { border-color: #3a3a3a; }
-
-    .service-card .icon { font-size: 1.6rem; margin-bottom: 1.2rem; }
+    
+    /* Reveal the image slightly more on hover */
+    .service-card:hover::before {
+      background: rgba(10, 10, 10, 0.65); 
+    }
 
     .service-card h3 {
       font-size: 0.9rem;
       font-weight: 600;
       letter-spacing: 0.04em;
       margin-bottom: 0.75rem;
+      color: var(--white);
     }
 
     .service-card p {
       font-size: 0.82rem;
-      color: var(--muted);
+      color: #ccc; /* Slightly lighter than var(--muted) for better contrast */
       line-height: 1.75;
     }
 
@@ -828,14 +849,14 @@ git push
     </div>
   </section>
 
-  <section id="services">
+<section id="services">
     <div class="section-label"
          data-en="Services"
          data-pt="Serviços">Services</div>
     <div class="services-grid">
 
-      <div class="service-card">
-        <div class="icon">🏎️</div>
+      <!-- Update the background-image URL for each card -->
+      <div class="service-card" style="background-image: url('photos/services/motorsports.webp');">
         <h3 data-en="Motorsports Coverage"
             data-pt="Cobertura de Motorsport">Motorsports Coverage</h3>
         <p data-en="On-track photography at racing events, track days, and circuit events. Full gallery delivery with commercial licensing available."
@@ -844,8 +865,7 @@ git push
         </p>
       </div>
 
-      <div class="service-card">
-        <div class="icon">🚗</div>
+      <div class="service-card" style="background-image: url('photos/services/vehicle.webp');">
         <h3 data-en="Vehicle Photography"
             data-pt="Fotografia Automóvel">Vehicle Photography</h3>
         <p data-en="Professional static and rolling shots for dealerships, private sellers, and enthusiasts. Studio and location setups."
@@ -854,8 +874,7 @@ git push
         </p>
       </div>
 
-      <div class="service-card">
-        <div class="icon">📷</div>
+      <div class="service-card" style="background-image: url('photos/services/event.webp');">
         <h3 data-en="Event Coverage"
             data-pt="Cobertura de Eventos">Event Coverage</h3>
         <p data-en="Full coverage of automotive meets, shows, and promotional events. Ideal for brand content and social media use."
@@ -864,8 +883,7 @@ git push
         </p>
       </div>
 
-      <div class="service-card">
-        <div class="icon">📦</div>
+      <div class="service-card" style="background-image: url('photos/services/licensing.webp');">
         <h3 data-en="Bulk Licensing"
             data-pt="Licenciamento em Massa">Bulk Licensing</h3>
         <p data-en="Teams and organisations can license full event galleries for press, marketing, and promotional use."
@@ -875,7 +893,7 @@ git push
       </div>
 
     </div>
-  </section>
+</section>
 
   <section id="gallery">
     <div class="section-label"
